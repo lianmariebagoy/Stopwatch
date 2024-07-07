@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 
 const Stopwatch = () => {
-  const [isRunning, setisRunning] = useState(false);
-  const [elapsedTime, setelapsedTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
   const [hasStopped, setHasStopped] = useState(false);
   const intervalIdRef = useRef(null);
   const startTimeRef = useRef(0);
@@ -10,7 +10,7 @@ const Stopwatch = () => {
   useEffect(() => {
     if (isRunning) {
       intervalIdRef.current = setInterval(() => {
-        setelapsedTime(Date.now() - startTimeRef.current);
+        setElapsedTime(Date.now() - startTimeRef.current);
       }, 10);
     } else {
       clearInterval(intervalIdRef.current);
@@ -22,19 +22,19 @@ const Stopwatch = () => {
   }, [isRunning]);
 
   const start = () => {
-    setisRunning(true);
+    setIsRunning(true);
     startTimeRef.current = Date.now() - elapsedTime;
     setHasStopped(false);
   };
 
   const stop = () => {
-    setisRunning(false);
+    setIsRunning(false);
     setHasStopped(true);
   };
 
   const reset = () => {
-    setelapsedTime(0);
-    setisRunning(false);
+    setElapsedTime(0);
+    setIsRunning(false);
     setHasStopped(false);
   };
 
@@ -57,16 +57,10 @@ const Stopwatch = () => {
       <div className="stopwatch">
         <div className="display">{formatTime()}</div>
         <div className="buttons">
-          {!isRunning && hasStopped ? (
-            <button onClick={start} className="start-btn">
-              Resume
-            </button>
-          ) : (
-            <button onClick={start} className="start-btn">
-              Start
-            </button>
-          )}
-          <button onClick={stop} className="stop-btn">
+          <button onClick={start} className="start-btn" disabled={isRunning}>
+            {hasStopped ? "Resume" : "Start"}
+          </button>
+          <button onClick={stop} className="stop-btn" disabled={!isRunning}>
             Stop
           </button>
           <button onClick={reset} className="reset-btn">
