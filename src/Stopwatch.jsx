@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 const Stopwatch = () => {
   const [isRunning, setisRunning] = useState(false);
   const [elapsedTime, setelapsedTime] = useState(0);
+  const [hasStopped, setHasStopped] = useState(false);
   const intervalIdRef = useRef(null);
   const startTimeRef = useRef(0);
 
@@ -11,6 +12,8 @@ const Stopwatch = () => {
       intervalIdRef.current = setInterval(() => {
         setelapsedTime(Date.now() - startTimeRef.current);
       }, 10);
+    } else {
+      clearInterval(intervalIdRef.current);
     }
 
     return () => {
@@ -21,15 +24,18 @@ const Stopwatch = () => {
   const start = () => {
     setisRunning(true);
     startTimeRef.current = Date.now() - elapsedTime;
+    setHasStopped(false);
   };
 
   const stop = () => {
     setisRunning(false);
+    setHasStopped(true);
   };
 
   const reset = () => {
     setelapsedTime(0);
     setisRunning(false);
+    setHasStopped(false);
   };
 
   const formatTime = () => {
@@ -51,9 +57,15 @@ const Stopwatch = () => {
       <div className="stopwatch">
         <div className="display">{formatTime()}</div>
         <div className="buttons">
-          <button onClick={start} className="start-btn">
-            Start
-          </button>
+          {!isRunning && hasStopped ? (
+            <button onClick={start} className="start-btn">
+              Resume
+            </button>
+          ) : (
+            <button onClick={start} className="start-btn">
+              Start
+            </button>
+          )}
           <button onClick={stop} className="stop-btn">
             Stop
           </button>
